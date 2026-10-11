@@ -18,6 +18,20 @@
 | `util/uuid` | v4, v5, проверка формата | wallet-api, wallet-report (тесты), google-auth, wallet-telegram |
 | `util/hex` | hex, `looks_like_sha256` | wallet-api, wallet-report (тесты), wallet-telegram |
 
+Кроме `util/` — общий код разбора трат и клиент wallet-report (2026-10-11,
+шаг 3 `org/docs/TODO_wallet_ai.md`): строгий формат бота и проверка ответа
+LLM в `wallet-ai` должны разбирать суммы и даты одинаково.
+
+| Файл | Что | Кто использует |
+| --- | --- | --- |
+| `expense/strict` | строгий формат трат (`parse_strict`), `parse_amount`, `amounts_in_text`, `currency_of`, `check_date`, `datetime_for` | wallet-telegram, wallet-ai |
+| `expense/resolver` | имена → счета (uuid) или кандидаты для вопроса, `parse_accounts` (ответ `GET /api/reports/accounts`) | wallet-telegram, wallet-ai |
+| `expense/text` | `normalize_name` (регистр, ё→е), `resolve_name`, формат сумм и дат, `truncate_utf8` | wallet-telegram, wallet-ai |
+| `clients/reports_client` | `GET` в wallet-report токеном пользователя; имя метрики ошибок — параметр | wallet-telegram, wallet-ai |
+
+Тесты `expense/` — в `wallet-telegram/tests/` (`test_strict`, `test_resolver`,
+`test_text`) и `wallet-ai/tests/` (`test_expense_check`).
+
 Код, нужный одному сервису (`time`, `url` у google-auth, `tz` у бота), в
 общую библиотеку не входит и остаётся в `src/util/` сервиса.
 
@@ -44,7 +58,7 @@ target_include_directories(svc PRIVATE ... ${WALLET_COMMON_DIR})
 ## Как менять
 
 1. Правка — **только здесь**, не в копии сервиса.
-2. `bash wallet-common/scripts/vendor.sh` — разложить по всем сервисам
+2. `bash wallet-common/scripts/vendor.sh` — разложить `util/`, `expense/`, `clients/` по всем сервисам
    (соседние папки с `third_party/wallet-common/`). Новый сервис — указать
    путь явно: `bash wallet-common/scripts/vendor.sh ../wallet-ai`.
 3. Собрать и прогнать тесты затронутых сервисов, закоммитить копию в каждом.

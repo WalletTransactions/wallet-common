@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Копирует util/ этого репозитория в <сервис>/third_party/wallet-common/ —
+# Копирует util/, expense/ и clients/ этого репозитория в <сервис>/third_party/wallet-common/ —
 # так же, как там лежат httplib.h и nlohmann: каждый сервис собирается из
 # своего репозитория без внешних зависимостей (Containerfile, CI не меняются).
 #
@@ -31,6 +31,7 @@ if [[ ${#targets[@]} -eq 0 ]]; then
 fi
 
 version="$(tr -d '[:space:]' < "$root/VERSION")"
+dirs=(util expense clients) # что раскладывается по сервисам
 commit="$(git -C "$root" describe --tags --always --dirty --abbrev=8 2>/dev/null || echo unknown)"
 
 status=0
@@ -39,7 +40,11 @@ for t in "${targets[@]}"; do
     dest="$t/third_party/wallet-common"
     name="$(basename "$t")"
     if [[ $check -eq 1 ]]; then
-        if diff -r -q -x VENDORED "$root/util" "$dest/util" > /dev/null 2>&1; then
+        same=1
+        for d in "${dirs[@]}"; do
+            diff -r -q "$root/$d" "$dest/$d" > /dev/null 2>&1 || same=0
+        done
+        if [[ $same -eq 1 ]]; then
             echo "ok       $name"
         else
             echo "differs  $name"
@@ -47,9 +52,11 @@ for t in "${targets[@]}"; do
         fi
         continue
     fi
-    rm -rf "$dest/util"
     mkdir -p "$dest"
-    cp -r "$root/util" "$dest/util"
+    for d in "${dirs[@]}"; do
+        rm -rf "${dest:?}/$d"
+        cp -r "$root/$d" "$dest/$d"
+    done
     printf 'wallet-common %s (%s)\nНе править: источник — репозиторий wallet-common, обновление — scripts/vendor.sh.\n' \
         "$version" "$commit" > "$dest/VENDORED"
     echo "vendored $name <- $version ($commit)"
