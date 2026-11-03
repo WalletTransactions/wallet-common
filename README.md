@@ -13,7 +13,7 @@
 | `util/jwks` | кеш JWKS google-auth | сервисы, проверяющие токены |
 | `util/jwt_claims` | проверка `iss`/`aud`/`scope` | все, кто проверяет токены |
 | `util/log` | JSON-логи, trace-id, `LOG_LEVEL` | все |
-| `util/metrics` | `/metrics`: HTTP-гистограммы, счётчики, гистограммы, gauge | все |
+| `util/metrics` | `/metrics`: HTTP-гистограммы, счётчики, гистограммы, gauge; `set_build_info(service, version, build, git_commit)` — `build_info` и `process_start_time_seconds`, `started_at_iso()` для `started_at` в `GET /version` | все |
 | `util/dotenv` | загрузка `.env` | все |
 | `util/uuid` | v4, v5, проверка формата | wallet-api, wallet-report (тесты), google-auth, wallet-telegram |
 | `util/hex` | hex, `looks_like_sha256` | wallet-api, wallet-report (тесты), wallet-telegram |
