@@ -1,0 +1,28 @@
+schema: spec-driven
+
+context: |
+  Все артефакты OpenSpec пишутся на русском.
+  wallet-common — общий C++17-код серверных сервисов WalletTransactions
+  (google-auth, wallet-api, wallet-report, wallet-gateway, wallet-ai,
+  wallet-telegram): util/ (JWT/JWKS, claims, криптография на OpenSSL, JSON-логи,
+  метрики Prometheus, .env, UUID, hex, base64), expense/ (разбор трат — строгий
+  формат бота и проверка ответа LLM, разрешение имён в счета) и clients/
+  (клиент wallet-report). Своего процесса, порта и HTTP API у репозитория нет.
+  В сервисы код попадает копией в third_party/wallet-common/ через
+  scripts/vendor.sh (не сабмодуль и не пакет), правится только здесь.
+  Автотестов в самом репозитории нет: тесты expense/ живут в wallet-telegram/tests/
+  и wallet-ai/tests/, остальное проверяется сборкой и тестами сервисов-потребителей.
+  Сборка и CI сервисов не меняются; зависимости — OpenSSL, nlohmann/json.hpp и
+  httplib.h из third_party/ самого сервиса.
+
+rules:
+  specs:
+    - Каждое требование — с хотя бы одним сценарием WHEN/THEN
+    - Имена функций, типов и значений enum приводить дословно, как в заголовках
+    - Не пересказывать реализацию — только наблюдаемое поведение и контракт вызова
+  design:
+    - Перечислить сервисы-потребители, которых затрагивает изменение API, и порядок выкатки
+    - Несовместимое изменение API — поднять минорную версию в VERSION
+  tasks:
+    - Каждая задача заканчивается сборкой и тестами затронутых сервисов и `bash scripts/vendor.sh --check`
+    - Изменение сопровождается правкой README.md (таблица файлов)
