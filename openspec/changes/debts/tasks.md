@@ -7,7 +7,12 @@
 
 ## 2. Сервисы
 
-- [ ] 2.1 Копия закоммичена в каждом сервисе (ветки `openspec-debts`), тесты затронутых сервисов (wallet-telegram, wallet-ai, wallet-mcp) зелёные. Проверка: `ctest` в каждом.
+- [x] 2.1 Копия закоммичена в каждом сервисе (ветки `openspec-debts`), тесты затронутых сервисов (wallet-telegram, wallet-ai, wallet-mcp) зелёные. Проверка: `ctest` в каждом.
+
+## Примечания к выполнению
+
+- 1.2, 2.1 — `vendor.sh` разложил 0.1.1 (3549f6e4) в google-auth, wallet-ai, wallet-gateway, wallet-mcp, wallet-api, wallet-report, wallet-telegram, `--check` — все `ok`; копия закоммичена в ветку `openspec-debts` каждого. `resolver.cpp` компилируют wallet-telegram, wallet-ai, wallet-mcp — их `ctest` зелёный (wallet-ai — с `poppler-utils`, как в его Containerfile); остальные получают только копию.
+- wallet-mcp: долговые кошельки пропадают и из `list_wallets`/`balance` и сопоставления имени кошелька в фильтрах операций — то же правило; форматирование строк `kind = "debt"` в MCP (сейчас без `from`/`to`) — вне этого change.
 
 ## Workflow follow-up
 
