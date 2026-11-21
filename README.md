@@ -30,6 +30,14 @@ LLM в `wallet-ai` должны разбирать суммы и даты оди
 | `expense/text` | `normalize_name` (регистр, ё→е), `resolve_name`, формат сумм и дат, `truncate_utf8` | wallet-telegram, wallet-ai |
 | `clients/reports_client` | `GET` в wallet-report токеном пользователя; имя метрики ошибок — параметр | wallet-telegram, wallet-ai |
 
+Взаимный TLS между сервисами (change `add-internal-mtls` в wallet-infra):
+
+| Файл | Что | Кто использует |
+| --- | --- | --- |
+| `net/tls` | `config_from_env` (`TLS_CERT`, `TLS_KEY`, `TLS_CA`: все или ни одной), `make_server` (`SSLServer` с обязательным клиентским сертификатом), `make_client` (схема `https`, клиентский сертификат, проверка CA и имени хоста), `peer_service` (CN вызывающего). Выключено — обычные `Server` и `Client`. Нужен `CPPHTTPLIB_OPENSSL_SUPPORT` | google-auth (пилот), далее все сервисы по шагам change |
+
+Тесты `net/tls` — `google-auth/tests/test_net_tls.cpp` (сертификаты генерирует сам тест).
+
 Тесты `expense/` — в `wallet-telegram/tests/` (`test_strict`, `test_resolver`,
 `test_text`) и `wallet-ai/tests/` (`test_expense_check`).
 

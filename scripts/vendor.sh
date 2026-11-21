@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Копирует util/, expense/ и clients/ этого репозитория в <сервис>/third_party/wallet-common/ —
+# Копирует util/, expense/, clients/ и net/ этого репозитория в <сервис>/third_party/wallet-common/ —
 # так же, как там лежат httplib.h и nlohmann: каждый сервис собирается из
 # своего репозитория без внешних зависимостей (Containerfile, CI не меняются).
 #
@@ -31,7 +31,7 @@ if [[ ${#targets[@]} -eq 0 ]]; then
 fi
 
 version="$(tr -d '[:space:]' < "$root/VERSION")"
-dirs=(util expense clients) # что раскладывается по сервисам
+dirs=(util expense clients net) # что раскладывается по сервисам
 commit="$(git -C "$root" describe --tags --always --dirty --abbrev=8 2>/dev/null || echo unknown)"
 
 status=0
