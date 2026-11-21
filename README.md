@@ -35,7 +35,7 @@ LLM в `wallet-ai` должны разбирать суммы и даты оди
 | Файл | Что | Кто использует |
 | --- | --- | --- |
 | `net/pool` | `ClientPool` — постоянные клиенты (keep-alive) к одному апстриму, один повтор на свежем соединении при обрыве простаивающего; для горячих связей при mTLS (гейтвей → api, report, ai, mcp, web) | wallet-gateway |
-| `net/tls` | `settings_from_env` (`TLS_*` и `INTERNAL_MTLS`: `serve` — свой сервер на mTLS, `call_internal` — вызовы к сервисам контура), `config_from_env` (`TLS_CERT`, `TLS_KEY`, `TLS_CA`: все или ни одной), `make_server` (`SSLServer` с обязательным клиентским сертификатом), `make_client` (схема `https`, клиентский сертификат, проверка CA и имени хоста), `peer_service` (CN вызывающего). Выключено — обычные `Server` и `Client`. Нужен `CPPHTTPLIB_OPENSSL_SUPPORT` | google-auth (пилот), далее все сервисы по шагам change |
+| `net/tls` | `client_value` (клиент по значению; бросает, если TLS включён, а клиент создать нельзя), `settings_from_env` (`TLS_*` и `INTERNAL_MTLS`: `serve` — свой сервер на mTLS, `call_internal` — вызовы к сервисам контура), `config_from_env` (`TLS_CERT`, `TLS_KEY`, `TLS_CA`: все или ни одной), `make_server` (`SSLServer` с обязательным клиентским сертификатом), `make_client` (схема `https`, клиентский сертификат, проверка CA и имени хоста), `peer_service` (CN вызывающего). Выключено — обычные `Server` и `Client`. Нужен `CPPHTTPLIB_OPENSSL_SUPPORT` | google-auth (пилот), далее все сервисы по шагам change |
 
 Тесты `net/tls` — `google-auth/tests/test_net_tls.cpp` (сертификаты генерирует сам тест).
 
